@@ -1,0 +1,27 @@
+import os
+import pickle
+
+import numpy as np
+import boto3
+import botocore
+import io
+
+s3 = boto3.resource('s3',
+    aws_access_key_id=access_key,
+    aws_secret_access_key=secret_key) #or just make sure aws configure commands are set up
+
+s3_bucket = s3.Bucket('coreycliptest') # select bucket name
+print("bucket>>> ", s3_bucket)
+obj = bucket.Object('scaler.pkl') # select object
+print("object>>> ", obj)
+stream = obj.get()['Body'] # get the "body" on the object which is the actual object
+#obj.download_file("H:\\corey\\aws\\scaler_pkl") << This downloads the file to my computer, maybe try in /tmp/ and load from there
+print("stream>>>", stream)
+read_stream = stream.read() # converts stream to binary
+print("binary>>> ", read_stream)
+scaler = pickle.loads(read_stream) # must use pickle.loads because the stream is in bytes
+
+# test out the scaler
+import numpy as np
+array = np.arange(1,7,1).reshape(1,-1)
+scaler.transform(array)
